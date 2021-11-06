@@ -1,0 +1,30 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  LambdaFunction1:
+    Type: AWS::Serverless::Function
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: index-photos
+      Handler: index-photos.lambda_handler
+      Runtime: python3.9
+      CodeUri: s3://${S3_BUCKET}/${LAMBDA_FUNCTION_NAME1}.zip
+      AutoPublishAlias: default
+      Timeout: 30
+      DeploymentPreference:
+        Enabled: True
+        Type: ${LAMBDA_DEPLOYMENT_PREFERENCE}
+  LambdaFunction2:
+    Type: AWS::Serverless::Function
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: index-photos
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      CodeUri: s3://${S3_BUCKET}/${LAMBDA_FUNCTION_NAME2}.zip
+      AutoPublishAlias: default
+      Timeout: 30
+      DeploymentPreference:
+        Enabled: True
+        Type: ${LAMBDA_DEPLOYMENT_PREFERENCE}
+      
