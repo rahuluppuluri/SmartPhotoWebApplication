@@ -1,0 +1,249 @@
+AWSTemplateFormatVersion: 2010-09-09
+Metadata:
+  'AWS::CloudFormation::Designer':
+    da2a7248-6a1b-4b1b-ad43-163dd8ffc844:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: -70
+        'y': 30
+      z: 1
+      embeds: []
+      dependson:
+        - 96220feb-ee33-44b9-8161-fc7b1391219f
+    96220feb-ee33-44b9-8161-fc7b1391219f:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 100
+        'y': 30
+      z: 1
+      embeds: []
+      dependson:
+        - 719f6c44-edb4-4812-b584-2235ea849b72
+        - 068dc448-c097-443a-b303-84fe7bb4de36
+        - b1b1af71-65ac-4920-a942-5f0f0d293432
+    719f6c44-edb4-4812-b584-2235ea849b72:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 190
+        'y': 150
+      z: 1
+      embeds: []
+    9071bb84-5b80-44a3-8144-2c0bc721a119:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: -30
+        'y': 140
+      z: 1
+      embeds: []
+      dependson:
+        - f276bdc3-f4b8-4b30-ac14-b4529807d75e
+        - 4c849f7b-a0ad-407d-9536-7f01941426bd
+    726f3cab-f6ee-4a63-8e1e-7071fa614ede:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 280
+        'y': 80
+      z: 1
+      embeds: []
+    4c849f7b-a0ad-407d-9536-7f01941426bd:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 220
+        'y': 240
+      z: 1
+      embeds: []
+    b1b1af71-65ac-4920-a942-5f0f0d293432:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: -40
+        'y': 340
+      z: 1
+      embeds: []
+      dependson:
+        - 9071bb84-5b80-44a3-8144-2c0bc721a119
+        - c41cc52b-e664-4670-86da-0691874db126
+    c41cc52b-e664-4670-86da-0691874db126:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: -140
+        'y': 340
+      z: 0
+    dff66e8e-12b1-4810-ad83-4beb89afa2dd:
+      source:
+        id: b1b1af71-65ac-4920-a942-5f0f0d293432
+      target:
+        id: 9071bb84-5b80-44a3-8144-2c0bc721a119
+      z: 2
+    c53bc3f6-dc55-4acb-a703-5b05b1657898:
+      source:
+        id: b1b1af71-65ac-4920-a942-5f0f0d293432
+      target:
+        id: c41cc52b-e664-4670-86da-0691874db126
+      z: 4
+Resources:
+  AGV2A47WC6:
+    Type: 'AWS::ApiGateway::RestApi'
+    Properties:
+      BodyS3Location: null
+      Bucket: !Ref S3Bucket
+      Key: swagger.yaml
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 96220feb-ee33-44b9-8161-fc7b1391219f
+    DependsOn:
+      - S3B3DG8S
+      - LF28Y7X
+  S3B3DG8S:
+    S3Bucket: null
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+      ReplicationConfiguration:
+        Role: 'arn:aws:iam::123456789012:role/replication_role'
+        Rules:
+          - Id: MyRule1
+            Status: Enabled
+            Prefix: MyPrefix
+            Destination:
+              Bucket: 'arn:aws:s3:::my-replication-bucket'
+              StorageClass: STANDARD
+          - Status: Enabled
+            Prefix: MyOtherPrefix
+            Destination:
+              Bucket: 'arn:aws:s3:::my-replication-bucket'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 719f6c44-edb4-4812-b584-2235ea849b72
+  LambdaFunctionOne:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Layers:
+        - !Ref elasticlibs
+      Handler: index-photos.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: hw2-lambda-code
+        S3Key: deployment.zip
+      Runtime: python3.7
+    DependsOn:
+      - ElasticSearchService
+      - RP3I1LJ
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: b1b1af71-65ac-4920-a942-5f0f0d293432
+  LambdaFunctionTwo:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Layers:
+        - !Ref elasticlibs
+      Handler: search-photos.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        S3Bucket: hw2-lambda-code
+        S3Key: deployment.zip
+      Runtime: python3.7
+      'AWS::CloudFormation::Designer':
+        id: f276bdc3-f4b8-4b30-ac14-b4529807d75e
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 4c849f7b-a0ad-407d-9536-7f01941426bd
+  ElasticSearchService:
+    Type: 'AWS::OpenSearchService::Domain'
+    Properties:
+      DomainName: photosalbum
+      EngineVersion: OpenSearch_1.0
+      ClusterConfig:
+        DedicatedMasterEnabled: true
+        InstanceCount: '2'
+        ZoneAwarenessEnabled: true
+        InstanceType: t3.small.search
+        DedicatedMasterType: t3.small.search
+        DedicatedMasterCount: '3'
+      EBSOptions:
+        EBSEnabled: true
+        Iops: '0'
+        VolumeSize: '20'
+        VolumeType: gp2
+      AccessPolicies:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: 'arn:aws:iam::123456789012:root'
+            Action: 'es:*'
+            Resource: 'arn:aws:es:us-west-2:123456789012:domain/photosalbum/*'
+      AdvancedOptions:
+        rest.action.multi.allow_explicit_index: true
+    DependsOn:
+      - LF52FU7
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 9071bb84-5b80-44a3-8144-2c0bc721a119
+  FrontendS3Bucket:
+    S3Bucket: null
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+      ReplicationConfiguration:
+        Role: 'arn:aws:iam::123456789012:role/replication_role'
+        Rules:
+          - Id: MyRule1
+            Status: Enabled
+            Prefix: MyPrefix
+            Destination:
+              Bucket: 'arn:aws:s3:::my-replication-bucket'
+              StorageClass: STANDARD
+          - Status: Enabled
+            Prefix: MyOtherPrefix
+            Destination:
+              Bucket: 'arn:aws:s3:::my-replication-bucket'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: da2a7248-6a1b-4b1b-ad43-163dd8ffc844
+    DependsOn:
+      - AGV2A47WC6
+  S3Bucket:
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      VersioningConfiguration:
+        Status: Enabled
+      ReplicationConfiguration:
+        Role: 'arn:aws:iam::123456789012:role/replication_role'
+        Rules:
+          - Id: MyRule1
+            Status: Enabled
+            Prefix: MyPrefix
+            Destination:
+              Bucket: 'arn:aws:s3:::my-replication-bucket'
+              StorageClass: STANDARD
+          - Status: Enabled
+            Prefix: MyOtherPrefix
+            Destination:
+              Bucket: 'arn:aws:s3:::my-replication-bucket'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 726f3cab-f6ee-4a63-8e1e-7071fa614ede
+  RP3I1LJ:
+    Type: 'AWS::Rekognition::Project'
+    Properties: {}
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: c41cc52b-e664-4670-86da-0691874db126
