@@ -1,4 +1,4 @@
-document.getElementById("displaytext").style.display = "none";
+document.getElementById("upload_message").style.display = "none";
 
 function searchPhoto() {
 
@@ -7,16 +7,16 @@ function searchPhoto() {
 
   });
 
-  var image_message = document.getElementById("note-textarea").value;
-  if (image_message == "")
-    var image_message = document.getElementById("transcript").value;
-  var image_message = image_message.replace('.', '').toLowerCase()
+  var search_query = document.getElementById("search-textarea").value;
+  if (search_query == "")
+    var search_query = document.getElementById("transcript").value;
+  var search_query = search_query.replace('.', '').toLowerCase()
 
-  console.log(image_message);
+  console.log(search_query);
 
   var body = {};
   var params = {
-    q: image_message
+    q: search_query
   };
   var additionalParams = {
     headers: {
@@ -31,13 +31,13 @@ function searchPhoto() {
 
       length_of_response = response_data.length;
       if (length_of_response == 0) {
-        document.getElementById("displaytext").innerHTML = "Search Failed to find any images !!!"
-        document.getElementById("displaytext").style.display = "block";
+        document.getElementById("upload_message").innerHTML = "Search failed to find images"
+        document.getElementById("upload_message").style.display = "block";
       }
       console.log(img1)
       document.getElementById("img-container").innerHTML = "";
       var para = document.createElement("p");
-      para.setAttribute("id", "displaytext")
+      para.setAttribute("id", "upload_message")
       document.getElementById("img-container").appendChild(para);
 
       img1.forEach(function (obj) {
@@ -47,9 +47,9 @@ function searchPhoto() {
         img.setAttribute("alt", "effy");
         img.setAttribute("width", "150");
         img.setAttribute("height", "100");
-        document.getElementById("displaytext").innerHTML = "Search Results : "
+        document.getElementById("upload_message").innerHTML = "Search Results : "
         document.getElementById("img-container").appendChild(img);
-        document.getElementById("displaytext").style.display = "block";
+        document.getElementById("upload_message").style.display = "block";
 
       });
     }).catch(function (result) {
@@ -82,9 +82,9 @@ function uploadPhoto() {
   url = "https://b0zf26u9ga.execute-api.us-west-2.amazonaws.com/dev/upload/photostoragebucket1/" + file.name
   axios.put(url, file, config).then(response => {
     console.log("Success");
-    document.getElementById("uploadText").innerHTML = "Successfully Uploaded Inage !!!"
+    document.getElementById("uploadText").innerHTML = "Successfully Uploaded Image"
     document.getElementById("uploadText").style.display = "block";
-    document.getElementById("uploadText").style.color = "green";
+    document.getElementById("uploadText").style.color = "blue";
     document.getElementById("uploadText").style.fontWeight = "bold";
   });
 
